@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiwj.screen.mapper.TaskMapper">
+    <select id="selectList" resultType="com.wiwj.screen.model.Task">
+        select t.*, c.command||' '||t.target command from task t
+        left join command c
+        on t.type = c.code
+        where t.groups = 'BREAK'
+        order by t.act desc, t.start
+    </select>
+    <select id="getTodo" resultType="com.wiwj.screen.model.Task">
+        select t.*, cfg.value || '\' || c.command ||' '||t.target command from task t
+        left join command c
+        on t.type = c.code
+        left join config cfg
+        on cfg.code='binDirPath'
+        where t.groups = 'BREAK'
+        and date(t.act) = date('now')
+        and t.start = #{start}
+    </select>
+    <insert id="insertSelective" parameterType="com.wiwj.screen.model.Task" >
+        insert into task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="target != null" >
+                target,
+            </if>
+            <if test="act != null" >
+                act,
+            </if>
+            <if test="start != null" >
+                start,
+            </if>
+            <if test="cost != null" >
+                cost,
+            </if>
+            <if test="groups != null" >
+                groups,
+            </if>
+            <if test="actend != null" >
+                actend,
+            </if>
+            <if test="seq != null" >
+                seq,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                #{name},
+            </if>
+            <if test="type != null" >
+                #{type},
+            </if>
+            <if test="target != null" >
+                #{target},
+            </if>
+            <if test="act != null" >
+                #{act},
+            </if>
+            <if test="start != null" >
+                #{start},
+            </if>
+            <if test="cost != null" >
+                #{cost},
+            </if>
+            <if test="groups != null" >
+                #{groups},
+            </if>
+            <if test="actend != null" >
+                #{actend},
+            </if>
+            <if test="seq != null" >
+                #{seq},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wiwj.screen.model.Task" >
+        update task
+        <set >
+            <if test="name != null" >
+                name = #{name},
+            </if>
+            <if test="type != null" >
+                type = #{type},
+            </if>
+            <if test="target != null" >
+                target = #{target},
+            </if>
+            <if test="act != null" >
+                act = #{act},
+            </if>
+            <if test="start != null" >
+                start = #{start,jdbcType=VARCHAR},
+            </if>
+            <if test="cost != null" >
+                cost = #{cost},
+            </if>
+            <if test="groups != null" >
+                groups = #{groups},
+            </if>
+            <if test="actend != null" >
+                actend = #{actend},
+            </if>
+            <if test="seq != null" >
+                seq = #{seq},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from task where id=#{id}
+    </delete>
+    <select id="selectFixList" resultType="com.wiwj.screen.model.Task">
+        select t.*, c.command||' '||t.target command from task t
+        left join command c
+        on t.type = c.code
+        where t.groups = 'FIX'
+        order by t.seq
+    </select>
+    <select id="getTodoFix" resultType="com.wiwj.screen.model.Task">
+        select t.*, cfg.value || '\' || c.command ||' '||t.target command from task t
+        left join command c
+        on t.type = c.code
+        left join config cfg
+        on cfg.code='binDirPath'
+        where t.groups = 'FIX'
+        and <![CDATA[ date(t.act) <= date('now') ]]>
+        and <![CDATA[ date(t.actend) >= date('now') ]]>
+        order by t.seq
+    </select>
+</mapper>

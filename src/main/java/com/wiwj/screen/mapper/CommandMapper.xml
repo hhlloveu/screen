@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiwj.screen.mapper.CommandMapper">
+    <select id="selectList" resultType="com.wiwj.screen.model.Command">
+        select * from command
+    </select>
+    <select id="getCommand" resultType="com.wiwj.screen.model.Command">
+        select c.id, c.name, c.code, cfg.value || '\' || c.command command
+         from command c left join config cfg on cfg.code='binDirPath'  where c.code=#{code}
+    </select>
+</mapper>
